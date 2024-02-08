@@ -212,7 +212,7 @@ function updateHints() {
 
 function updateErrors(cost) {
     costs += cost;
-    totalCost.textContent = `total non-optimal cost: ${costs.toFixed(4)}`;
+    displayWagered();
 }
 
 function drawCard(play) {
@@ -230,7 +230,7 @@ function drawCard(play) {
 }
 
 function displayWagered() {
-    message.textContent = `this hand: ${wagered} units, total: ${net > 0 ? "+" : ""}${net}`;
+    message.innerHTML = `this hand: ${wagered} units, total: ${net > 0 ? "+" : ""}${net} <span style="color: red;">(${costs.toFixed(4)})</span>`;
 }
 
 function resolveWagers() {
@@ -271,6 +271,18 @@ function shuffleAndDeal() {
     displayCards('playerCards', player);
     updateHints();
     displayWagered();
+}
+
+function toggleMenu() {
+    var content = document.querySelector('.content');
+    var toggle = document.querySelector('.toggle');
+    if (content.style.display === "none") {
+        content.style.display = "block";
+        toggle.innerHTML = 'v'; // Change to down arrow when expanded
+    } else {
+        content.style.display = "none";
+        toggle.innerHTML = '>'; // Change to right arrow when collapsed
+    }
 }
 
 document.getElementById('shuffle').addEventListener('click', function() {
