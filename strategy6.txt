@@ -51,7 +51,7 @@ else 1x
 Suited 4th St:
 --------------
 3x any SF draw, else
-3x if (6*flushOuts+highOuts-(38-flushOuts-highOuts-midOuts)) > 0, else
+3x if (6*flushOuts+5*straightOuts+highOuts-(38-flushOuts-straightOuts-highOuts-midOuts)) > 0, else
 1x all other flush draws
 
 Mixed 2nd St:
