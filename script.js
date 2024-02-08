@@ -149,16 +149,23 @@ class MSStud {
         let outs = {low: 0, mid: 0, high: 0};
         let remaining = new Hand(...unseen);
         remaining.eval();
-        let all = new Array(...player, ...community);
-        for (let c of all) {
-            let n = remaining.rankCnt[c.rank];
-            if (Hand.isHigh(c.rank)) {
-                outs["high"] += n;
-            } else if (Hand.isLow(c.rank)) {
-                outs["low"] += n;
-            } else {
-                outs["mid"] += n;
+        let all = new Hand(...player, ...community);
+        all.eval();
+        if (all.rank == 'Nothing') {
+            for (let c of all) {
+                let n = remaining.rankCnt[c.rank];
+                if (Hand.isHigh(c.rank)) {
+                    outs["high"] += n;
+                } else if (Hand.isLow(c.rank)) {
+                    outs["low"] += n;
+                } else {
+                    outs["mid"] += n;
+                }
             }
+        } else {
+            outs["high"] = "-";
+            outs["mid"] = "-";
+            outs["low"] = "-";
         }
         return outs;
     }
