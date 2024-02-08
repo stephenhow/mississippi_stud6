@@ -1,0 +1,10 @@
+.DS_Store
+*.o
+*.sqlite3
+*.sqlite3-journal
+*.dSYM
+*.log
+*.icloud
+*.txt
+analyze
+monteCarlo

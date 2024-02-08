@@ -1,0 +1,52 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+#gameContainer {
+    text-align: center;
+}
+
+#shuffle {
+    margin-bottom: 20px;
+    font-size: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+#play3x, #play1x, #fold {
+    margin-bottom: 20px;
+    font-size: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+#otherCards, #playerCards {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#message, #costs {
+    margin-bottom: 20px;
+    font-size: 20px;
+    padding: 10px 20px;
+}
+
+.card {
+    width: 100px; /* Adjust based on your images */
+    height: 140px; /* Adjust based on your images */
+    background-size: cover;
+}
+
+.grayed-out {
+  color: #999;
+  background-color: #ccc;
+  border: 1px solid #999;
+}
