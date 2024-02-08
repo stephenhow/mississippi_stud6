@@ -97,7 +97,7 @@ else 0x
 Mixed 4th St:
 -------------
 if wagered prior 3x, 1x 4+/0/- OR 3/1+/- OR 2/3+/- OR 1/5+/- OR 0/7+/-, else 0x
-3x if (5*straightOuts+highOuts-(38-flushOuts-highOuts-midOuts)) > 0, else
+3x if (5*straightOuts+highOuts-(38-straightOuts-highOuts-midOuts)) > 0, else
 5+/-/- 1x
 4/2+/- 1x
 3/4+/- 1x
