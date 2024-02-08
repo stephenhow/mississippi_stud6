@@ -33,7 +33,7 @@ body, html {
     margin-bottom: 20px;
 }
 
-#message, #costs {
+#message, #hint {
     margin-bottom: 20px;
     font-size: 20px;
     padding: 10px 20px;

@@ -36,65 +36,67 @@ class Hand extends Array {
     constructor(...elements) {
         super(...elements);
     }
+    rankCnt = {};
+    suitCnt = {};
     static handRanks = ["Nothing", "Low Pair", "Mid Pair", "High Pair", "Two Pairs", "Three-of-a-Kind",
                         "Straight", "Flush", "Full House", "Four-of-a-Kind", "Straight Flush", "Royal Flush"];
-    isLow(r) {
+    static isLow(r) {
         return (r == '2') || (r == '3') || (r == '4') || (r == '5');
     }
-    isHigh(r) {
+    static isHigh(r) {
         return (r == 'A') || (r == 'K') || (r == 'Q') || (r == 'J');
     }
-    isStraight(rankCnt) {
-        if (rankCnt['A'] && rankCnt['K'] && rankCnt['Q'] && rankCnt['J'] && rankCnt['T']) return true;
-        else if (rankCnt['K'] && rankCnt['Q'] && rankCnt['J'] && rankCnt['T'] && rankCnt['9']) return true;
-        else if (rankCnt['Q'] && rankCnt['J'] && rankCnt['T'] && rankCnt['9'] && rankCnt['8']) return true;
-        else if (rankCnt['J'] && rankCnt['T'] && rankCnt['9'] && rankCnt['8'] && rankCnt['7']) return true;
-        else if (rankCnt['T'] && rankCnt['9'] && rankCnt['8'] && rankCnt['7'] && rankCnt['6']) return true;
-        else if (rankCnt['9'] && rankCnt['8'] && rankCnt['7'] && rankCnt['6'] && rankCnt['5']) return true;
-        else if (rankCnt['8'] && rankCnt['7'] && rankCnt['6'] && rankCnt['5'] && rankCnt['4']) return true;
-        else if (rankCnt['7'] && rankCnt['6'] && rankCnt['5'] && rankCnt['4'] && rankCnt['3']) return true;
-        else if (rankCnt['6'] && rankCnt['5'] && rankCnt['4'] && rankCnt['3'] && rankCnt['2']) return true;
-        else if (rankCnt['5'] && rankCnt['4'] && rankCnt['3'] && rankCnt['2'] && rankCnt['A']) return true;
+    isStraight(rcnt) {
+        if (rcnt['A'] && rcnt['K'] && rcnt['Q'] && rcnt['J'] && rcnt['T']) return true;
+        else if (rcnt['K'] && rcnt['Q'] && rcnt['J'] && rcnt['T'] && rcnt['9']) return true;
+        else if (rcnt['Q'] && rcnt['J'] && rcnt['T'] && rcnt['9'] && rcnt['8']) return true;
+        else if (rcnt['J'] && rcnt['T'] && rcnt['9'] && rcnt['8'] && rcnt['7']) return true;
+        else if (rcnt['T'] && rcnt['9'] && rcnt['8'] && rcnt['7'] && rcnt['6']) return true;
+        else if (rcnt['9'] && rcnt['8'] && rcnt['7'] && rcnt['6'] && rcnt['5']) return true;
+        else if (rcnt['8'] && rcnt['7'] && rcnt['6'] && rcnt['5'] && rcnt['4']) return true;
+        else if (rcnt['7'] && rcnt['6'] && rcnt['5'] && rcnt['4'] && rcnt['3']) return true;
+        else if (rcnt['6'] && rcnt['5'] && rcnt['4'] && rcnt['3'] && rcnt['2']) return true;
+        else if (rcnt['5'] && rcnt['4'] && rcnt['3'] && rcnt['2'] && rcnt['A']) return true;
         else return false;
     }
     eval() {
         this.rank = "Nothing";
-        let rankCnt = {};
+        this.rankCnt = {};
         for (let rank of Card.ranks) {
-            rankCnt[rank] = 0;
+            this.rankCnt[rank] = 0;
         }
-        let suitCnt = {};
+        this.suitCnt = {};
         for (let suit of Card.suits) {
-            suitCnt[suit] = 0;
+            this.suitCnt[suit] = 0;
         }
         let isFlush=false;
         for (let card of this) {
-            rankCnt[card.rank]++;
-            suitCnt[card.suit]++;
-            if (suitCnt[card.suit] == 5) isFlush=true;
+            this.rankCnt[card.rank]++;
+            this.suitCnt[card.suit]++;
+            if (this.suitCnt[card.suit] == 5) isFlush=true;
         }
         let pairs=0, trips=0, quads=0;
         for (let r of Card.ranks) {
-            if (rankCnt[r] == 2) {
+            if (this.rankCnt[r] == 2) {
                 pairs++;
-                if (this.isLow(r)) this.rank = "Low Pair";
-                else if (this.isHigh(r)) this.rank = "High Pair";
+                if (Hand.isLow(r)) this.rank = "Low Pair";
+                else if (Hand.isHigh(r)) this.rank = "High Pair";
                 else this.rank = "Mid Pair";
-            } else if (rankCnt[r] == 3) {
+            } else if (this.rankCnt[r] == 3) {
                 trips++;
-            } else if (rankCnt[r] == 4) {
+            } else if (this.rankCnt[r] == 4) {
                 quads++;
             }
         }
-        if (isFlush && this.isStraight(rankCnt)) {
-            this.rank = ((rankCnt['A'] && rankCnt['K']) ? 'Royal Flush' : 'Straight Flush');
+        if (isFlush && this.isStraight(this.rankCnt)) {
+            this.rank = ((this.rankCnt['A'] && this.rankCnt['K']) ? 'Royal Flush' : 'Straight Flush');
         } else if (quads) {
             this.rank = "Four-of-a-Kind";
         } else if (trips && pairs) {
             this.rank = "Full House";
         } else if (isFlush) {
             this.rank = "Flush";
-        } else if (this.isStraight(rankCnt)) {
+        } else if (this.isStraight(this.rankCnt)) {
             this.rank = "Straight";
         } else if (trips) {
             this.rank = "Three-of-a-Kind";
@@ -141,6 +143,24 @@ class MSStud {
             ev /= draws;
         }
         return ev;
+    }
+
+    static countOuts(player, community, unseen) {
+        let outs = {low: 0, mid: 0, high: 0};
+        let remaining = new Hand(...unseen);
+        remaining.eval();
+        let all = new Array(...player, ...community);
+        for (let c of all) {
+            let n = remaining.rankCnt[c.rank];
+            if (Hand.isHigh(c.rank)) {
+                outs["high"] += n;
+            } else if (Hand.isLow(c.rank)) {
+                outs["low"] += n;
+            } else {
+                outs["mid"] += n;
+            }
+        }
+        return outs;
     }
 
     static getPayout(hand) {
@@ -197,17 +217,21 @@ let button1x = document.getElementById('play1x');
 let foldButton = document.getElementById('fold');
 let message = document.getElementById('message');
 let totalCost = document.getElementById('costs');
+let hint = document.getElementById('hint');
 let gameOver = false;
 let ev = [];
 let costs=0;
 
 function updateHints() {
+    outs = MSStud.countOuts(player, community, remaining);
     ev[3] = MSStud.calcEV(3, player, community, remaining, wagered);
     ev[1] = MSStud.calcEV(1, player, community, remaining, wagered);
     ev[0] = MSStud.calcEV(0, player, community, remaining, wagered);
     button3x.title = `EV: ${ev[3] >= 0 ? "+" : ""}${ev[3].toFixed(4)}`;
-    button1x.title = `EV: ${ev[1] >= 0 ? "+" : ""}${ev[1].toFixed(4)}`;
+    let foldMessage="";
+    button1x.title = `EV: ${ev[1] >= 0 ? "+" : ""}${ev[1].toFixed(4)} ${foldMessage}`;
     foldButton.title = `EV: ${ev[0].toFixed(0)}`;
+    hint.textContent = `${outs["high"]}/${outs["mid"]}/${outs["low"]}`;
 }
 
 function updateErrors(cost) {
