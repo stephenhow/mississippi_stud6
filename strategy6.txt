@@ -1,0 +1,123 @@
+Mississippi Stud, +3.0% 6-Player Strategy (500/100/40/10/6/5/3/2/1 Pay Table)
+
+Low Pair
+--------
+3x on 2nd St w/ 2 trip outs, else 1x w/ 1 trip out, else fold w/ 0 trip outs
+3x on 3rd St w/ 5 pay outs, else 1x w/ 2+ pay outs, else fold
+1x on 4th St w/ 2+ trip outs OR 3+ pay outs, else fold
+
+Suited 2nd St:
+--------------
+6/0/0 3x
+5/0/0 3x if possible SF, else 1x
+4/0/0 1x
+3/3/0 3x if possible SF, else 1x
+3/2/0 1x
+3/1/0 1x
+3/0/- 1x
+2/3/0 1x
+2/2/0 1x
+2/1/0 1x
+2/0/3 1x
+2/0/2 1x w/ 12+ pay cards, else 0x
+2/0/1 0x
+2/0/0 0x
+1/3/0 1x
+1/2/0 1x if no-gap OR 12+ pay cards, else 0x
+1/1/0 0x
+1/0/- 0x
+0/6/0 1x
+0/5/0 1x
+0/4/0 1x
+0/3/3 1x
+0/3/2 1x if no-gap OR possible SF, else 0x
+0/3/1 1x if possible SF, else 0x
+0/3/0 1x if possible SF, else 0x
+0/2/- 0x
+0/1/- 0x
+0/0/- 0x
+
+Suited 3rd St:
+--------------
+3x any possible RF
+3x no-gap w/ 2+/-/- OR -/4+/0, else 1x
+3x one-gap w/ 6+/-/0 OR 5/1+/0 OR 4/2+/0 OR 3/3/0 OR 2/4+/0 OR 1/6/0 OR 0/8+/0, else 1x
+3x two-gap w/ 7+/-/- OR 6/1+/0 OR 5/2+/0 OR 4/3/0 OR 3/4+/0, else 1x
+else (no possible straight):
+7+/0/0 3x
+6/2+/0 3x
+else 1x
+
+Suited 4th St:
+--------------
+3x any SF draw, else
+3x if (6*flushOuts+highOuts-(38-flushOuts-highOuts-midOuts)) > 0, else
+1x all other flush draws
+
+Mixed 2nd St:
+-------------
+6/0/0 3x
+5/0/0 1x
+4/0/0 1x
+3/-/- 1x
+2/3/0 1x
+2/2/0 1x
+2/1/0 1x if reaches, else 0x
+2/0/3 1x w/ 12+ pay cards, else 0x
+2/0/2 0x
+2/0/1 0x
+2/0/0 0x
+1/3/0 1x if reaches, else 0x
+1/2/0 0x
+1/1/0 0x
+1/0/- 0x
+0/6/0 1x
+0/5/0 1x
+0/4/0 0x
+0/3/3 1x if no-gap OR one-gap OR 12+ pay cards, else 0x
+else 0x
+
+Mixed 3rd St:
+-------------
+9/0/0 3x if no-gap OR one-gap, else 1x
+8/0/0 3x if no-gap, else 1x
+7/0/0 3x if no-gap, else 1x
+6/3/0 3x if no-gap, else 1x
+4+/-/- 1x
+3/2+/- 1x
+3/1/2+ 1x
+3/0/5+ 1x
+2/4+/0 1x
+2/3/2+ 1x
+else 1x no-gap with -/1+/- OR 0/0/9
+else 1x one-gap with 1+/-/- OR 0/3+/-
+else 1x two-gap with 3+/-/- OR 2/1+/- OR 0/6+/- OR 0/5/2+
+else 0x
+
+Mixed 4th St:
+-------------
+if wagered prior 3x, 1x 4+/0/- OR 3/1+/- OR 2/3+/- OR 1/5+/- OR 0/7+/-, else 0x
+3x if (5*straightOuts+highOuts-(38-flushOuts-highOuts-midOuts)) > 0, else
+5+/-/- 1x
+4/2+/- 1x
+3/4+/- 1x
+2/6+/- 1x
+1/8+/- 1x
+0/10+/- 1x
+else 0x
+
+Key:
+    (high outs / mid outs / low outs) = remaining outs, given 12 cards seen on 2nd St
+    "Suited" on 2nd St means suited player cards
+    "Suited" on 3rd and 4th St mean possible player flush
+    "possible SF" = can draw to a Straight Flush with cards remaining in deck
+    "no-gap", "one-gap", "two-gap" = max distance between adjacent cards
+    "12+ pay cards" = 12 or more high cards left in deck
+    "reaches" = possible straight
+    2nd St = 0 community cards
+    3rd St = 1 community card
+    4th St = 2 community cards
+    5th St = 5 total player cards
+    3x = play 3x
+    1x = play 1x
+    0x = fold
