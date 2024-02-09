@@ -226,14 +226,15 @@ let message = document.getElementById('message');
 let totalCost = document.getElementById('costs');
 let hint = document.getElementById('hint');
 let gameOver = false;
-let ev = [];
-let costs=0;
+let ev = [], evDealt=0;
+let costs=0, expected=0;
 
 function updateHints() {
     outs = MSStud.countOuts(player, community, remaining);
     ev[3] = MSStud.calcEV(3, player, community, remaining, wagered);
     ev[1] = MSStud.calcEV(1, player, community, remaining, wagered);
     ev[0] = MSStud.calcEV(0, player, community, remaining, wagered);
+    if (community.length == 0) evDealt = Math.max(ev[3], ev[1], ev[0]);
     button3x.title = `EV: ${ev[3] >= 0 ? "+" : ""}${ev[3].toFixed(4)}`;
     let foldMessage="";
     button1x.title = `EV: ${ev[1] >= 0 ? "+" : ""}${ev[1].toFixed(4)} ${foldMessage}`;
@@ -261,7 +262,7 @@ function drawCard(play) {
 }
 
 function displayWagered() {
-    message.innerHTML = `this hand: ${wagered} units, total: ${net > 0 ? "+" : ""}${net} <span style="color: red;">(${costs.toFixed(4)})</span>`;
+    message.innerHTML = `this hand: ${wagered} units, total: ${net > 0 ? "+" : ""}${net} <span style="color: red;">(${costs.toFixed(4)})</span> ideal: ${expected.toFixed(1)}`;
 }
 
 function resolveWagers() {
@@ -273,6 +274,7 @@ function resolveWagers() {
     hand.eval();
     outcome = wagered*MSStud.getPayout(hand);
     net += outcome;
+    expected += evDealt;
     message.textContent = `${hand.length == 5 ? hand.rank : "FOLD"}, outcome: ${outcome > 0 ? "+" : ""}${outcome}, net: ${net}`;
 }
 
