@@ -262,7 +262,7 @@ function drawCard(play) {
 }
 
 function displayWagered() {
-    message.innerHTML = `this hand: ${wagered} units, total: ${net > 0 ? "+" : ""}${net} <span style="color: red;">(${costs.toFixed(4)})</span> ideal: ${expected.toFixed(1)}`;
+    message.innerHTML = `this hand: ${wagered} units, total: ${net > 0 ? "+" : ""}${net} <span style="color: red;">(${costs.toFixed(4)})</span> ideal: ${expected > 0 ? "+" : ""}${expected.toFixed(1)}`;
 }
 
 function resolveWagers() {
