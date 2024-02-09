@@ -228,6 +228,13 @@ let hint = document.getElementById('hint');
 let gameOver = false;
 let ev = [], evDealt=0;
 let costs=0, expected=0;
+let showHints=false;
+
+function displayEVHints() {
+    button3x.title = (showHints ? `EV: ${ev[3] >= 0 ? "+" : ""}${ev[3].toFixed(4)}` : "");
+    button1x.title = (showHints ? `EV: ${ev[1] >= 0 ? "+" : ""}${ev[1].toFixed(4)}` : "");
+    foldButton.title = `EV: ${ev[0].toFixed(0)}`;
+}
 
 function updateHints() {
     outs = MSStud.countOuts(player, community, remaining);
@@ -235,10 +242,7 @@ function updateHints() {
     ev[1] = MSStud.calcEV(1, player, community, remaining, wagered);
     ev[0] = MSStud.calcEV(0, player, community, remaining, wagered);
     if (community.length == 0) evDealt = Math.max(ev[3], ev[1], ev[0]);
-    button3x.title = `EV: ${ev[3] >= 0 ? "+" : ""}${ev[3].toFixed(4)}`;
-    let foldMessage="";
-    button1x.title = `EV: ${ev[1] >= 0 ? "+" : ""}${ev[1].toFixed(4)} ${foldMessage}`;
-    foldButton.title = `EV: ${ev[0].toFixed(0)}`;
+    displayEVHints();
     hint.textContent = `${outs["high"]}/${outs["mid"]}/${outs["low"]}`;
 }
 
@@ -346,4 +350,9 @@ foldButton.addEventListener('click', function() {
         if (cost != 0) updateErrors(cost);
         resolveWagers();
     }
+});
+
+document.getElementById('toggleCheckbox').addEventListener('change', function() {
+    showHints = this.checked;
+    displayEVHints();
 });
