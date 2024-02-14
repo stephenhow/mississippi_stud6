@@ -8,7 +8,7 @@ class Card {
         this.suit = suit;
     }
     ordinalRank() {
-        return ranks.findIndex(r => r == this.rank);
+        return Card.ranks.findIndex(r => r == this.rank);
     }
     isHigher(other) {
         return (this.ordinalRank() > other.ordinalRank());
@@ -38,6 +38,7 @@ class Hand extends Array {
     }
     rankCnt = {};
     suitCnt = {};
+    straightMask = 0;
     static handRanks = ["Nothing", "Low Pair", "Mid Pair", "High Pair", "Two Pairs", "Three-of-a-Kind",
                         "Straight", "Flush", "Full House", "Four-of-a-Kind", "Straight Flush", "Royal Flush"];
     static isLow(r) {
@@ -46,20 +47,39 @@ class Hand extends Array {
     static isHigh(r) {
         return (r == 'A') || (r == 'K') || (r == 'Q') || (r == 'J');
     }
-    isStraight(rcnt) {
-        if (rcnt['A'] && rcnt['K'] && rcnt['Q'] && rcnt['J'] && rcnt['T']) return true;
-        else if (rcnt['K'] && rcnt['Q'] && rcnt['J'] && rcnt['T'] && rcnt['9']) return true;
-        else if (rcnt['Q'] && rcnt['J'] && rcnt['T'] && rcnt['9'] && rcnt['8']) return true;
-        else if (rcnt['J'] && rcnt['T'] && rcnt['9'] && rcnt['8'] && rcnt['7']) return true;
-        else if (rcnt['T'] && rcnt['9'] && rcnt['8'] && rcnt['7'] && rcnt['6']) return true;
-        else if (rcnt['9'] && rcnt['8'] && rcnt['7'] && rcnt['6'] && rcnt['5']) return true;
-        else if (rcnt['8'] && rcnt['7'] && rcnt['6'] && rcnt['5'] && rcnt['4']) return true;
-        else if (rcnt['7'] && rcnt['6'] && rcnt['5'] && rcnt['4'] && rcnt['3']) return true;
-        else if (rcnt['6'] && rcnt['5'] && rcnt['4'] && rcnt['3'] && rcnt['2']) return true;
-        else if (rcnt['5'] && rcnt['4'] && rcnt['3'] && rcnt['2'] && rcnt['A']) return true;
-        else return false;
+    isStraight() {
+        for (let i=0; i<10; i++) {
+            if (((this.straightMask>>i)&0x1f) == 0x1f) return true;
+        }
+        return false;
+    }
+    isStraightDraw() {
+        for (let i=0; i<10; i++) {
+            let masked = (this.straightMask>>i)&0x1f;
+            let n=0;
+            for (let j=0; j<5; j++) {
+                n += (masked>>j)&1;
+            }
+            if (n == 4) return true;
+        }
+        return false;
+    }
+    isSuited() {
+        if (this.length == 0) return false;
+        for (let card of this) {
+            if (card.suit != this[0].suit) return false;
+        }
+        return true;
+    }
+    setStraightMask() {
+        this.straightMask = 0;
+        for (let card of this) {
+            this.straightMask |= (1<<card.ordinalRank());
+        }
+        this.straightMask = (this.straightMask<<1) | ((this.straightMask>>12)&1);  // wrap Ace around
     }
     eval() {
+        this.setStraightMask();
         this.rank = "Nothing";
         this.rankCnt = {};
         for (let rank of Card.ranks) {
@@ -88,7 +108,7 @@ class Hand extends Array {
                 quads++;
             }
         }
-        if (isFlush && this.isStraight(this.rankCnt)) {
+        if (isFlush && this.isStraight()) {
             this.rank = ((this.rankCnt['A'] && this.rankCnt['K']) ? 'Royal Flush' : 'Straight Flush');
         } else if (quads) {
             this.rank = "Four-of-a-Kind";
@@ -96,7 +116,7 @@ class Hand extends Array {
             this.rank = "Full House";
         } else if (isFlush) {
             this.rank = "Flush";
-        } else if (this.isStraight(this.rankCnt)) {
+        } else if (this.isStraight()) {
             this.rank = "Straight";
         } else if (trips) {
             this.rank = "Three-of-a-Kind";
@@ -105,7 +125,6 @@ class Hand extends Array {
         }
         return this.rank;
     }
-
 }
 
 class MSStud {
@@ -149,23 +168,16 @@ class MSStud {
         let outs = {low: 0, mid: 0, high: 0};
         let remaining = new Hand(...unseen);
         remaining.eval();
-        let all = new Hand(...player, ...community);
-        all.eval();
-        if (all.rank == 'Nothing') {
-            for (let c of all) {
-                let n = remaining.rankCnt[c.rank];
-                if (Hand.isHigh(c.rank)) {
-                    outs["high"] += n;
-                } else if (Hand.isLow(c.rank)) {
-                    outs["low"] += n;
-                } else {
-                    outs["mid"] += n;
-                }
+        let all = new Array(...player, ...community);
+        for (let c of all) {
+            let n = remaining.rankCnt[c.rank];
+            if (Hand.isHigh(c.rank)) {
+                outs["high"] += n;
+            } else if (Hand.isLow(c.rank)) {
+                outs["low"] += n;
+            } else {
+                outs["mid"] += n;
             }
-        } else {
-            outs["high"] = "-";
-            outs["mid"] = "-";
-            outs["low"] = "-";
         }
         return outs;
     }
@@ -224,11 +236,124 @@ let button1x = document.getElementById('play1x');
 let foldButton = document.getElementById('fold');
 let message = document.getElementById('message');
 let totalCost = document.getElementById('costs');
-let hint = document.getElementById('hint');
 let gameOver = false;
 let ev = [], evDealt=0;
 let costs=0, expected=0;
 let showHints=false;
+
+function setStrategyHint(hand, outs) {
+    let hint = "";
+    let suited = hand.isSuited();
+    if (MSStud.getPayout(hand) >= 0) {
+        hint = "3x no can lose";
+    } else if (hand.rank == "Low Pair") {
+        hint = "low pair: 3x on 2nd/3rd St with all outs, fold on 2nd St if double-copied, else 1x";
+    } else if (community.length == 0) {
+        if (suited) {
+            switch(outs["high"]) {
+                case 6: hint = "3x 6 high suited outs"; break;
+                case 5: hint = "3x 5 high suited outs w/ SF possibility, else 1x"; break;
+                case 4: hint = "1x 3 high outs or better"; break;
+                case 3: switch(outs["mid"]) {
+                    case 3: hint = "3x suited uncopied high and mid if possible SF"; break;
+                    case 2: hint = "1x 3 high outs or better"; break;
+                    case 1: case 0: hint = "1x 3 high outs or better"; break;
+                }
+                case 2:
+                    if (outs["mid"]) hint = "1x suited 2 high with any mid outs";
+                    else if (outs["low"] == 3) hint = "1x suited 2 high and 3 low outs";
+                    else hint = "Only 1x suited 2/0/- with possible SF, or reaches AND 12+ pay cards left";
+                    break;
+                case 1:
+                    if (outs["mid"] == 3) hint = "1x suited 1 high and 3 mid outs";
+                    else if (outs["mid"] == 2) hint = "Only 1x suited 1/2/- with possible SF, or reaches AND 12+ pay cards left";
+                    else hint = "fold suited 1 suited high out without at least 2 mid outs";
+                    break;
+                case 0: switch (outs["mid"]) {
+                    case 6: case 5: case 4:
+                        hint = "1x suited with at least 4 mid outs"; break;
+                    case 3:
+                        if (outs["low"] == 3) hint = "1x suited mid and low with no copies";
+                        else if (outs["low"] == 2) hint = "Only 1x suited 3 mid and 2 low outs if no-gap OR possible SF";
+                        else hint = "Only 1x suited 3 mid outs if possible SF";
+                        break;
+                    default: hint = "Fold suited with < 2 mid outs"; break;
+                }
+            }
+        } else {
+            // offsuit
+            switch (outs["high"]) {
+                case 6: hint = "3x 6 high outs -> never fold"; break;
+                case 5: case 4: case 3: hint = "1x any 3 high outs"; break;
+                case 2: switch (outs["mid"]) {
+                    case 3: case 2: hint = "1x 2 high and 2 mid outs or better"; break;
+                    case 1: hint = "Only 1x 2 high and 1 mid out IF reaches"; break;
+                    case 0:
+                        if (outs["low"] == 3) hint = "Only 1x 2 high and 3 low outs if 12+ pay cards left, etc.";
+                        else hint = "Fold 2 high and 2 low outs or worse";
+                        break;
+                }
+                case 1:
+                    if (outs["mid"] == 3) hint = "Only 1x 1 high and 3 mid outs IF reaches";
+                    else hint = "Fold 1 high and 2 or less mid outs";
+                    break;
+                case 0: switch (outs["mid"]) {
+                    case 6: case 5: hint = "1x 5 or 6 mids outs"; break;
+                    case 4: hint = "Fold 4 mid outs"; break;
+                    case 3:
+                        if (outs["low"] == 3) hint = "Only 1x 3 mid and 3 low outs IF reaches";
+                        else hint = "Fold 3 mid and copied low";
+                        break;
+                    case 2: case 1: hint = "Must fold with just 2 mid outs"; break;
+                    case 0: hint = "Must fold with only low outs"; break;
+                }
+            }
+        }
+    } else if (community.length == 1) {
+        if (suited) {
+
+        } else {
+            if (outs["high"] >= 4) hint = "1x any 4 high outs or better";
+            else if ((outs["high"] == 3) && (outs["mid"] >= 2)) hint = "1x 3 high and 2 mid outs or better";
+            else if ((outs["high"] == 3) && (outs["low"] >= 5)) hint = "1x 3 high and 5 low outs or better";
+            else if (outs["high"] == 3) hint = "1x 3 high and <2 mid outs IF reaches";
+            else if ((outs["high"] == 2) && (outs["low"] >= 4)) hint = "1x 2 high and 4 mid outs or better";
+            else if ((outs["high"] == 2) && (outs["mid"] == 3)) switch (outs["low"]) {
+                case 3: case 2: hint = "1x 2/3/2 or better"; break;
+                case 1: hint = "Only 1x 2/3/1 if 12+ pay cards left"; break;
+                case 0: hint = "Only 1x 2/3/0 IF reaches"; break;
+            } else if ((outs["high"] == 2) && (outs["mid"] >= 1)) hint = "Only 1x 2 high and 1 mid out IF reaches";
+            else if (outs["high"] == 1) switch (outs["mid"]) {
+
+            } else if (outs["high"] == 0) switch (outs["mid"]) {
+                case 9: case 8: case 7: hint = "1x 7 or more mid outs"; break;
+                case 6:
+                    if (outs["low"] == 3) hint = "1x all 6 mid and 3 low outs";
+                    else hint = "Only 1x 6 mid outs IF reaches";
+                    break;
+                case 5: switch (outs["low"]) {
+                    case 3: case 2: hint = "Only 1x 5 mid and 2+ low outs IF reaches"; break;
+                    case 1: case 0: hint = "Only 1x 5 mid and <2 low outs if no-gap or one-gap"; break;
+                }
+                default:
+                    hint = "Fold unless no-gap and any mid outs or all 9 low outs, or one-gap with 3+ mid outs";
+                    break;
+            }
+        }
+    } else if (community.length == 2) {
+        if (suited) {
+
+        } else {
+            if (outs["high"] >= 5) hint = "1x with 5 high outs or better";
+            else if (outs["high"] == 4) hint = "1x with 4 high and 2 mid outs or better";
+            else if (outs["high"] == 3) hint = "1x with 3 high and 4 mid outs or better";
+            else if (outs["high"] == 2) hint = "1x with 2 high and 6 mid outs or better";
+            else if (outs["high"] == 1) hint = "1x with 1 high and 8 mid outs or better";
+            else if (outs["high"] == 0) hint = "1x with 10 mid outs or better";
+        }
+    }
+    document.getElementById('strategy').textContent = hint;
+}
 
 function displayEVHints() {
     button3x.title = (showHints ? `EV: ${ev[3] >= 0 ? "+" : ""}${ev[3].toFixed(4)}` : "");
@@ -237,13 +362,21 @@ function displayEVHints() {
 }
 
 function updateHints() {
+    let hand = new Hand(...player, ...community);
+    hand.eval();
     outs = MSStud.countOuts(player, community, remaining);
     ev[3] = MSStud.calcEV(3, player, community, remaining, wagered);
     ev[1] = MSStud.calcEV(1, player, community, remaining, wagered);
     ev[0] = MSStud.calcEV(0, player, community, remaining, wagered);
     if (community.length == 0) evDealt = Math.max(ev[3], ev[1], ev[0]);
     displayEVHints();
-    hint.textContent = `${outs["high"]}/${outs["mid"]}/${outs["low"]}`;
+    setStrategyHint(hand, outs);
+    if (hand.rank == "Nothing") {
+        document.getElementById('outs').textContent = `${outs["high"]}/${outs["mid"]}/${outs["low"]}`;
+    } else {
+        document.getElementById('outs').textContent = ``;
+
+    }
 }
 
 function updateErrors(cost) {
@@ -306,18 +439,6 @@ function shuffleAndDeal() {
     displayWagered();
 }
 
-function toggleMenu() {
-    var content = document.querySelector('.content');
-    var toggle = document.querySelector('.toggle');
-    if (content.style.display === "none") {
-        content.style.display = "block";
-        toggle.innerHTML = 'v'; // Change to down arrow when expanded
-    } else {
-        content.style.display = "none";
-        toggle.innerHTML = '>'; // Change to right arrow when collapsed
-    }
-}
-
 document.getElementById('shuffle').addEventListener('click', function() {
     shuffleAndDeal();
 });
@@ -350,5 +471,6 @@ foldButton.addEventListener('click', function() {
 
 document.getElementById('toggleCheckbox').addEventListener('change', function() {
     showHints = this.checked;
+    document.getElementById('strategy').style.display = (this.checked ? 'block' : 'none');
     displayEVHints();
 });

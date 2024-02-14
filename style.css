@@ -33,10 +33,16 @@ body, html {
     margin-bottom: 20px;
 }
 
-#message, #hint {
+#message, #strategy, #outs {
     margin-bottom: 20px;
     font-size: 20px;
-    padding: 10px 20px;
+    height: 20px;
+    padding: 0px 20px;
+}
+
+#strategy {
+    font-style: italic;
+    display: none;
 }
 
 .card {
@@ -49,18 +55,4 @@ body, html {
   color: #999;
   background-color: #ccc;
   border: 1px solid #999;
-}
-
-.toggle {
-    cursor: pointer;
-    font-size: 24px; /* Size of the arrow */
-}
-
-.content {
-    overflow: hidden;
-    transition: max-height 0.2s ease-out;
-}
-
-.menu {
-    display: none;  // disable for now
 }

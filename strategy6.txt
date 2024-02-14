@@ -25,6 +25,7 @@ Suited 2nd St:
 1/3/0 1x
 1/2/0 1x if possible SF OR (reaches && 12+ pay cards), else 0x
 1/1/0 0x
+1/0/3 0x
 1/0/- 0x
 0/6/0 1x
 0/5/0 1x
@@ -101,9 +102,7 @@ Mixed 3rd St:
 1/6/0 1x
 1/5/0 1x if reaches, else 0x
 1/4/0 1x if reaches, else 0x
-1/3/3 0x
-1/3/2 0x
-1/3/1 0x
+1/3/- 0x
 1+/-/- 1x if no-gap OR one-gap, else 0x
 0/8+/0 1x
 0/7+/- 1x
