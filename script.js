@@ -256,9 +256,7 @@ function drawCard(play) {
     let cost = (ev[play] - Math.max(ev[3], ev[1], ev[0]));
     if (cost != 0) updateErrors(cost);
     community.push(remaining.pop());
-    let combined = [];
-    combined.push(...player);
-    combined.push(...community);
+    let combined = [...player, ...community];
     displayCards('playerCards', combined);
     if (community.length <= 2) updateHints();
     displayWagered();
@@ -266,15 +264,13 @@ function drawCard(play) {
 }
 
 function displayWagered() {
-    message.innerHTML = `this hand: ${wagered} units, total: ${net > 0 ? "+" : ""}${net} <span style="color: red;">(${costs.toFixed(4)})</span> ideal: ${expected > 0 ? "+" : ""}${expected.toFixed(1)}`;
+    message.innerHTML = `this hand: ${wagered} units, total: ${net > 0 ? "+" : ""}${net};  theoretical: ${expected > 0 ? "+" : ""}${expected.toFixed(1)} <span style="color: red;">(${costs.toFixed(2)})</span>`;
 }
 
 function resolveWagers() {
     gameOver = true;
     dimButtons();
-    hand = new Hand();
-    hand.push(...player);
-    hand.push(...community);
+    hand = new Hand(...player, ...community);
     hand.eval();
     outcome = wagered*MSStud.getPayout(hand);
     net += outcome;
