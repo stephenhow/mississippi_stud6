@@ -345,11 +345,11 @@ function setStrategyHint(hand, outs) {
 
         } else {
             if (outs["high"] >= 5) hint = "1x with 5 high outs or better";
-            else if (outs["high"] == 4) hint = "1x with 4 high and 2 mid outs or better";
-            else if (outs["high"] == 3) hint = "1x with 3 high and 4 mid outs or better";
-            else if (outs["high"] == 2) hint = "1x with 2 high and 6 mid outs or better";
-            else if (outs["high"] == 1) hint = "1x with 1 high and 8 mid outs or better";
-            else if (outs["high"] == 0) hint = "1x with 10 mid outs or better";
+            else if (outs["high"] == 4) hint = (outs["mid"] >= 2) ? "1x with 4 high and 2 mid outs or better" : "Fold with less than 4 high and 2 mid outs";
+            else if (outs["high"] == 3) hint = (outs["mid"] >= 4) ? "1x with 3 high and 4 mid outs or better" : "Fold with less than 3 high and 4 mid outs";
+            else if (outs["high"] == 2) hint = (outs["mid"] >= 6) ? "1x with 2 high and 6 mid outs or better" : "Fold with less than 2 high and 6 mid outs";
+            else if (outs["high"] == 1) hint = (outs["mid"] >= 8) ? "1x with 1 high and 8 mid outs or better" : "Fold with less than 1 high and 8 mid outs";
+            else if (outs["high"] == 0) hint = (outs["mid"] >= 10) ? "1x with 10 mid outs or better" : "Fold with less than 10 mid outs";
         }
     }
     document.getElementById('strategy').textContent = hint;
