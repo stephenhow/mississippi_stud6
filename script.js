@@ -310,7 +310,7 @@ function setStrategyHint(hand, outs) {
                         case 4: hint = "Fold 4 mid outs"; break;
                         case 3:
                             if (outs["low"] == 3) hint = "Fold unless 3 mid and 3 low outs AND reaches";
-                            else hint = "Fold 3 mid and copied low";
+                            else hint = "Fold copied mid and low";
                             break;
                         case 2: case 1: hint = "Must fold with just 2 mid outs"; break;
                         case 0: hint = "Must fold with only low outs"; break;
@@ -326,7 +326,7 @@ function setStrategyHint(hand, outs) {
             else if ((outs["high"] == 3) && (outs["mid"] >= 2)) hint = "1x 3 high and 2 mid outs or better";
             else if ((outs["high"] == 3) && (outs["low"] >= 5)) hint = "1x 3 high and 5 low outs or better";
             else if (outs["high"] == 3) hint = "1x 3 high and <2 mid outs AND reaches";
-            else if ((outs["high"] == 2) && (outs["low"] >= 4)) hint = "1x 2 high and 4 mid outs or better";
+            else if ((outs["high"] == 2) && (outs["mid"] >= 4)) hint = "1x 2 high and 4 mid outs or better";
             else if ((outs["high"] == 2) && (outs["mid"] == 3)) switch (outs["low"]) {
                 case 3: case 2: hint = "1x 2/3/2 or better"; break;
                 case 1: hint = "Fold unless 2/3/1 if 12+ pay cards left"; break;
