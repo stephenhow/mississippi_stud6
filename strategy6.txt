@@ -145,7 +145,3 @@ Key:
     3x = play 3x
     1x = play 1x
     0x = fold
-    ...
-    "total junk" = 2 low offsuit cards (dealt)
-    "junk" = 1 mid + 1 low (dealt); "offsuit junk", "suited junk", "mixed junk", "copied mixed junk"
-    "low suited junk" = 2 low dealt card
