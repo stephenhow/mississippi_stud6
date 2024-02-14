@@ -78,6 +78,12 @@ class Hand extends Array {
         }
         this.straightMask = (this.straightMask<<1) | ((this.straightMask>>12)&1);  // wrap Ace around
     }
+    contains(card) {
+        for (let c of this) {
+            if (c.isIdentical(card)) return true;
+        }
+        return false;
+    }
     eval() {
         this.setStraightMask();
         this.rank = "Nothing";
@@ -128,17 +134,14 @@ class Hand extends Array {
 }
 
 class MSStud {
-    static calcEV(play, hole, community, unseen, wagered) {
+    static calcEV(play, player, unseen, wagered) {
         if (play == 0) return -1*wagered;
         let ev=0;
         let draws=0;
-        if (community.length == 2) {
+        if (player.length == 4) {
             // 5th St (resolve hand)
-            let player = new Hand();
-            player.push(...hole);
-            player.push(...community);
             for (let river of unseen) {
-                if (!river.isIdentical(community[0]) && !river.isIdentical(community[1])) {
+                if (!player.contains(river)) {
                     draws++;
                     player.push(river);
                     player.eval();
@@ -150,13 +153,13 @@ class MSStud {
         } else {
             let ev0x = -1*(play+wagered);
             for (let card of unseen) {
-                if ((community.length == 0) || !card.isIdentical(community[0])) {
+                if (!player.contains(card)) {
                     draws++;
-                    community.push(card);
-                    let ev3x = MSStud.calcEV(3, hole, community, unseen, play+wagered);
-                    let ev1x = MSStud.calcEV(1, hole, community, unseen, play+wagered);
+                    player.push(card);
+                    let ev3x = MSStud.calcEV(3, player, unseen, play+wagered);
+                    let ev1x = MSStud.calcEV(1, player, unseen, play+wagered);
                     ev += Math.max(ev0x, ev1x, ev3x);
-                    community.pop();
+                    player.pop();
                 }
             }
             ev /= draws;
@@ -309,7 +312,7 @@ function setStrategyHint(hand, outs) {
                         case 6: case 5: hint = "1x 5 or 6 mids outs"; break;
                         case 4: hint = "Fold 4 mid outs"; break;
                         case 3:
-                            if (outs["low"] == 3) hint = "Fold unless 3 mid and 3 low outs AND reaches";
+                            if (outs["low"] == 3) hint = "Fold unless uncopied mid and low AND reaches";
                             else hint = "Fold copied mid and low";
                             break;
                         case 2: case 1: hint = "Must fold with just 2 mid outs"; break;
@@ -376,12 +379,12 @@ function displayEVHints() {
 
 function updateHints() {
     let hand = new Hand(...player, ...community);
+    ev[3] = MSStud.calcEV(3, hand, remaining, wagered);
+    ev[1] = MSStud.calcEV(1, hand, remaining, wagered);
+    ev[0] = MSStud.calcEV(0, hand, remaining, wagered);
+    if (community.length == 0) evDealt = Math.max(ev[3], ev[1], ev[0]);
     hand.eval();
     outs = MSStud.countOuts(player, community, remaining);
-    ev[3] = MSStud.calcEV(3, player, community, remaining, wagered);
-    ev[1] = MSStud.calcEV(1, player, community, remaining, wagered);
-    ev[0] = MSStud.calcEV(0, player, community, remaining, wagered);
-    if (community.length == 0) evDealt = Math.max(ev[3], ev[1], ev[0]);
     displayEVHints();
     setStrategyHint(hand, outs);
     if (hand.rank == "Nothing") {
