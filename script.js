@@ -254,59 +254,68 @@ function setStrategyHint(hand, outs) {
                 case 6: hint = "3x 6 high suited outs"; break;
                 case 5: hint = "3x 5 high suited outs w/ SF possibility, else 1x"; break;
                 case 4: hint = "1x 3 high outs or better"; break;
-                case 3: switch(outs["mid"]) {
-                    case 3: hint = "3x suited uncopied high and mid if possible SF"; break;
-                    case 2: hint = "1x 3 high outs or better"; break;
-                    case 1: case 0: hint = "1x 3 high outs or better"; break;
-                }
+                case 3:
+                    switch(outs["mid"]) {
+                        case 3: hint = "3x suited uncopied high and mid if possible SF"; break;
+                        case 2: hint = "1x 3 high outs or better"; break;
+                        case 1: case 0: hint = "1x 3 high outs or better"; break;
+                    }
+                    break;
                 case 2:
                     if (outs["mid"]) hint = "1x suited 2 high with any mid outs";
                     else if (outs["low"] == 3) hint = "1x suited 2 high and 3 low outs";
-                    else hint = "Only 1x suited 2/0/- with possible SF, or reaches AND 12+ pay cards left";
+                    else hint = "Fold unless suited 2/0/- with possible SF, or reaches AND 12+ pay cards left";
                     break;
                 case 1:
                     if (outs["mid"] == 3) hint = "1x suited 1 high and 3 mid outs";
-                    else if (outs["mid"] == 2) hint = "Only 1x suited 1/2/- with possible SF, or reaches AND 12+ pay cards left";
+                    else if (outs["mid"] == 2) hint = "Fold unless suited 1/2/- with possible SF, or reaches AND 12+ pay cards left";
                     else hint = "fold suited 1 suited high out without at least 2 mid outs";
                     break;
-                case 0: switch (outs["mid"]) {
-                    case 6: case 5: case 4:
-                        hint = "1x suited with at least 4 mid outs"; break;
-                    case 3:
-                        if (outs["low"] == 3) hint = "1x suited mid and low with no copies";
-                        else if (outs["low"] == 2) hint = "Only 1x suited 3 mid and 2 low outs if no-gap OR possible SF";
-                        else hint = "Only 1x suited 3 mid outs if possible SF";
-                        break;
-                    default: hint = "Fold suited with < 2 mid outs"; break;
-                }
+                case 0:
+                    switch (outs["mid"]) {
+                        case 6: case 5: case 4:
+                            hint = "1x suited with at least 4 mid outs"; break;
+                        case 3:
+                            if (outs["low"] == 3) hint = "1x suited mid and low with no copies";
+                            else if (outs["low"] == 2) hint = "Fold unless suited 3 mid and 2 low outs if no-gap OR possible SF";
+                            else hint = "Fold unless suited 3 mid outs if possible SF";
+                            break;
+                        default:
+                            hint = "Fold suited with < 2 mid outs"; break;
+                    }
+                    break;
             }
         } else {
             // offsuit
             switch (outs["high"]) {
                 case 6: hint = "3x 6 high outs -> never fold"; break;
                 case 5: case 4: case 3: hint = "1x any 3 high outs"; break;
-                case 2: switch (outs["mid"]) {
-                    case 3: case 2: hint = "1x 2 high and 2 mid outs or better"; break;
-                    case 1: hint = "Only 1x 2 high and 1 mid out IF reaches"; break;
-                    case 0:
-                        if (outs["low"] == 3) hint = "Only 1x 2 high and 3 low outs if 12+ pay cards left, etc.";
-                        else hint = "Fold 2 high and 2 low outs or worse";
-                        break;
-                }
+                case 2:
+                    switch (outs["mid"]) {
+                        case 3: case 2: hint = "1x 2 high and 2 mid outs or better"; break;
+                        case 1: hint = "Fold unless 2 high and 1 mid out AND reaches"; break;
+                        case 0:
+                            if (outs["low"] == 3) hint = "Fold unless 2 high and 3 low outs if 12+ pay cards left, etc.";
+                            else hint = "Fold 2 high and 2 low outs or worse";
+                            break;
+                    }
+                    break;
                 case 1:
-                    if (outs["mid"] == 3) hint = "Only 1x 1 high and 3 mid outs IF reaches";
+                    if (outs["mid"] == 3) hint = "Fold unless 1 high and 3 mid outs AND reaches";
                     else hint = "Fold 1 high and 2 or less mid outs";
                     break;
-                case 0: switch (outs["mid"]) {
-                    case 6: case 5: hint = "1x 5 or 6 mids outs"; break;
-                    case 4: hint = "Fold 4 mid outs"; break;
-                    case 3:
-                        if (outs["low"] == 3) hint = "Only 1x 3 mid and 3 low outs IF reaches";
-                        else hint = "Fold 3 mid and copied low";
-                        break;
-                    case 2: case 1: hint = "Must fold with just 2 mid outs"; break;
-                    case 0: hint = "Must fold with only low outs"; break;
-                }
+                case 0:
+                    switch (outs["mid"]) {
+                        case 6: case 5: hint = "1x 5 or 6 mids outs"; break;
+                        case 4: hint = "Fold 4 mid outs"; break;
+                        case 3:
+                            if (outs["low"] == 3) hint = "Fold unless 3 mid and 3 low outs AND reaches";
+                            else hint = "Fold 3 mid and copied low";
+                            break;
+                        case 2: case 1: hint = "Must fold with just 2 mid outs"; break;
+                        case 0: hint = "Must fold with only low outs"; break;
+                    }
+                    break;
             }
         }
     } else if (community.length == 1) {
@@ -316,25 +325,29 @@ function setStrategyHint(hand, outs) {
             if (outs["high"] >= 4) hint = "1x any 4 high outs or better";
             else if ((outs["high"] == 3) && (outs["mid"] >= 2)) hint = "1x 3 high and 2 mid outs or better";
             else if ((outs["high"] == 3) && (outs["low"] >= 5)) hint = "1x 3 high and 5 low outs or better";
-            else if (outs["high"] == 3) hint = "1x 3 high and <2 mid outs IF reaches";
+            else if (outs["high"] == 3) hint = "1x 3 high and <2 mid outs AND reaches";
             else if ((outs["high"] == 2) && (outs["low"] >= 4)) hint = "1x 2 high and 4 mid outs or better";
             else if ((outs["high"] == 2) && (outs["mid"] == 3)) switch (outs["low"]) {
                 case 3: case 2: hint = "1x 2/3/2 or better"; break;
-                case 1: hint = "Only 1x 2/3/1 if 12+ pay cards left"; break;
-                case 0: hint = "Only 1x 2/3/0 IF reaches"; break;
-            } else if ((outs["high"] == 2) && (outs["mid"] >= 1)) hint = "Only 1x 2 high and 1 mid out IF reaches";
+                case 1: hint = "Fold unless 2/3/1 if 12+ pay cards left"; break;
+                case 0: hint = "Fold unless 2/3/0 AND reaches"; break;
+            } else if ((outs["high"] == 2) && (outs["mid"] >= 1)) hint = "Fold unless 2 high and 1 mid out AND reaches";
             else if (outs["high"] == 1) switch (outs["mid"]) {
-
+                case 6: hint = "1x 1 high and 6 mid outs or better"; break;
+                case 5: case 4: hint = "Fold unless 1 high and 4/5 mid out AND reaches"; break;
+                default: hint = "Fold 1 high and 3 or less mid outs";
             } else if (outs["high"] == 0) switch (outs["mid"]) {
                 case 9: case 8: case 7: hint = "1x 7 or more mid outs"; break;
                 case 6:
                     if (outs["low"] == 3) hint = "1x all 6 mid and 3 low outs";
-                    else hint = "Only 1x 6 mid outs IF reaches";
+                    else hint = "Fold unless 6 mid outs AND reaches";
                     break;
-                case 5: switch (outs["low"]) {
-                    case 3: case 2: hint = "Only 1x 5 mid and 2+ low outs IF reaches"; break;
-                    case 1: case 0: hint = "Only 1x 5 mid and <2 low outs if no-gap or one-gap"; break;
-                }
+                case 5:
+                    switch (outs["low"]) {
+                        case 3: case 2: hint = "Fold unless 5 mid and 2+ low outs AND reaches"; break;
+                        case 1: case 0: hint = "Fold unless 5 mid and <2 low outs if no-gap or one-gap"; break;
+                    }
+                    break;
                 default:
                     hint = "Fold unless no-gap and any mid outs or all 9 low outs, or one-gap with 3+ mid outs";
                     break;
