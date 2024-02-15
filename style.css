@@ -45,6 +45,10 @@ body, html {
     display: none;
 }
 
+#outs {
+    display: none;  // initial value
+}
+
 .card {
     width: 100px; /* Adjust based on your images */
     height: 140px; /* Adjust based on your images */

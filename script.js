@@ -267,6 +267,7 @@ function setStrategyHint(hand, outs) {
                 case 2:
                     if (outs["mid"]) hint = "1x suited 2 high with any mid outs";
                     else if (outs["low"] == 3) hint = "1x suited 2 high and 3 low outs";
+                    else if (outs["low"] == 2) hint = "1x suited 2 high and 2 low outs";
                     else hint = "Fold unless suited 2/0/- with possible SF, or reaches AND 12+ pay cards left";
                     break;
                 case 1:
@@ -283,37 +284,39 @@ function setStrategyHint(hand, outs) {
                             else if (outs["low"] == 2) hint = "Fold unless suited 3 mid and 2 low outs if no-gap OR possible SF";
                             else hint = "Fold unless suited 3 mid outs if possible SF";
                             break;
+                        case 2: case 1:
                         default:
-                            hint = "Fold suited with < 2 mid outs"; break;
+                            hint = "Fold suited with 2 or less mids"; break;
                     }
                     break;
             }
         } else {
             // offsuit
             switch (outs["high"]) {
-                case 6: hint = "3x 6 high outs -> never fold"; break;
+                case 6: hint = "3x 6 high outs"; break;
                 case 5: case 4: case 3: hint = "1x any 3 high outs"; break;
                 case 2:
                     switch (outs["mid"]) {
                         case 3: case 2: hint = "1x 2 high and 2 mid outs or better"; break;
                         case 1: hint = "Fold unless 2 high and 1 mid out AND reaches"; break;
                         case 0:
-                            if (outs["low"] == 3) hint = "Fold unless 2 high and 3 low outs if 12+ pay cards left, etc.";
+                            if (outs["low"] == 3) hint = "Fold 2 high and 3 low outs unless 12+ pay cards left, etc.";
                             else hint = "Fold 2 high and 2 low outs or worse";
                             break;
                     }
                     break;
                 case 1:
-                    if (outs["mid"] == 3) hint = "Fold unless 1 high and 3 mid outs AND reaches";
+                    if (outs["mid"] == 3) hint = "Fold 1 high and 3 mid outs unless reaches";
                     else hint = "Fold 1 high and 2 or less mid outs";
                     break;
                 case 0:
                     switch (outs["mid"]) {
                         case 6: case 5: hint = "1x 5 or 6 mids outs"; break;
-                        case 4: hint = "Fold 4 mid outs"; break;
+                        case 4: hint = "Fold 4 mid outs unless 12+ pay cards left AND no-gap"; break;
                         case 3:
-                            if (outs["low"] == 3) hint = "Fold unless uncopied mid and low AND reaches";
-                            else hint = "Fold copied mid and low";
+                            if (outs["low"] == 3) hint = "Fold unless uncopied mid and low reaches OR 12+ pay cards left";
+                            else if (outs["low"] == 0) hint = "Fold 0/3/0";
+                            else hint = "Fold 3 mid outs and copied low";
                             break;
                         case 2: case 1: hint = "Must fold with just 2 mid outs"; break;
                         case 0: hint = "Must fold with only low outs"; break;
@@ -335,6 +338,7 @@ function setStrategyHint(hand, outs) {
                 case 1: hint = "Fold unless 2/3/1 if 12+ pay cards left"; break;
                 case 0: hint = "Fold unless 2/3/0 AND reaches"; break;
             } else if ((outs["high"] == 2) && (outs["mid"] >= 1)) hint = "Fold unless 2 high and 1 mid out AND reaches";
+            else if ((outs["high"] == 2) && (outs["mid"] == 0)) hint = "Fold 2 high and 0 mid outs";
             else if (outs["high"] == 1) switch (outs["mid"]) {
                 case 6: hint = "1x 1 high and 6 mid outs or better"; break;
                 case 5: case 4: hint = "Fold unless 1 high and 4/5 mid out AND reaches"; break;
@@ -358,9 +362,10 @@ function setStrategyHint(hand, outs) {
         }
     } else if (community.length == 2) {
         if (suited) {
-
+            hint = "Generally 3x flush draws";
         } else {
-            if (outs["high"] >= 5) hint = "1x with 5 high outs or better";
+            if (hand.isStraightDraw()) hint = "Generally 3x open-ended straight draws or with enough high outs";
+            else if (outs["high"] >= 5) hint = "1x with 5 high outs or better";
             else if (outs["high"] == 4) hint = (outs["mid"] >= 2) ? "1x with 4 high and 2 mid outs or better" : "Fold with less than 4 high and 2 mid outs";
             else if (outs["high"] == 3) hint = (outs["mid"] >= 4) ? "1x with 3 high and 4 mid outs or better" : "Fold with less than 3 high and 4 mid outs";
             else if (outs["high"] == 2) hint = (outs["mid"] >= 6) ? "1x with 2 high and 6 mid outs or better" : "Fold with less than 2 high and 6 mid outs";
@@ -391,7 +396,6 @@ function updateHints() {
         document.getElementById('outs').textContent = `${outs["high"]}/${outs["mid"]}/${outs["low"]}`;
     } else {
         document.getElementById('outs').textContent = ``;
-
     }
 }
 
@@ -485,8 +489,12 @@ foldButton.addEventListener('click', function() {
     }
 });
 
-document.getElementById('toggleCheckbox').addEventListener('change', function() {
+document.getElementById('hintsCheckbox').addEventListener('change', function() {
     showHints = this.checked;
     document.getElementById('strategy').style.display = (this.checked ? 'block' : 'none');
     displayEVHints();
+});
+
+document.getElementById('outsCheckbox').addEventListener('change', function() {
+    document.getElementById('outs').style.display = (this.checked ? 'block' : 'none');
 });
