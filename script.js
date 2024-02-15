@@ -461,6 +461,7 @@ function shuffleAndDeal() {
 
 document.getElementById('shuffle').addEventListener('click', function() {
     shuffleAndDeal();
+    document.getElementById('shuffle').style.display = 'none';
 });
 
 button3x.addEventListener('click', function() {
