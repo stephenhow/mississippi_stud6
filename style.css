@@ -42,11 +42,11 @@ body, html {
 
 #strategy {
     font-style: italic;
-    display: none;
+    visibility: hidden;
 }
 
 #outs {
-    display: none;  // initial value
+    visibility: hidden;  // initial value
 }
 
 .card {

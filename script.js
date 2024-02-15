@@ -492,10 +492,10 @@ foldButton.addEventListener('click', function() {
 
 document.getElementById('hintsCheckbox').addEventListener('change', function() {
     showHints = this.checked;
-    document.getElementById('strategy').style.display = (this.checked ? 'block' : 'none');
+    document.getElementById('strategy').style.visibility = (this.checked ? 'visible' : 'hidden');
     displayEVHints();
 });
 
 document.getElementById('outsCheckbox').addEventListener('change', function() {
-    document.getElementById('outs').style.display = (this.checked ? 'block' : 'none');
+    document.getElementById('outs').style.visibility = (this.checked ? 'visible' : 'hidden');
 });
