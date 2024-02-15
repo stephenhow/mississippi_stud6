@@ -239,10 +239,12 @@ let button1x = document.getElementById('play1x');
 let foldButton = document.getElementById('fold');
 let message = document.getElementById('message');
 let totalCost = document.getElementById('costs');
+let strategy = document.getElementById('strategy');
 let gameOver = false;
 let ev = [], evDealt=0;
 let costs=0, expected=0;
-let showHints=false;
+let showHints = false;
+let showError = false;
 
 function setStrategyHint(hand, outs) {
     let hint = "";
@@ -301,7 +303,7 @@ function setStrategyHint(hand, outs) {
                         case 1: hint = "Fold unless 2 high and 1 mid out AND reaches"; break;
                         case 0:
                             if (outs["low"] == 3) hint = "Fold 2 high and 3 low outs unless 12+ pay cards left, etc.";
-                            else hint = "Fold 2 high and 2 low outs or worse";
+                            else hint = "Fold copied high and 2 low outs or worse";
                             break;
                     }
                     break;
@@ -373,7 +375,7 @@ function setStrategyHint(hand, outs) {
             else if (outs["high"] == 0) hint = (outs["mid"] >= 10) ? "1x with 10 mid outs or better" : "Fold with less than 10 mid outs";
         }
     }
-    document.getElementById('strategy').textContent = hint;
+    strategy.textContent = hint;
 }
 
 function displayEVHints() {
@@ -391,7 +393,12 @@ function updateHints() {
     hand.eval();
     outs = MSStud.countOuts(player, community, remaining);
     displayEVHints();
-    setStrategyHint(hand, outs);
+    if (showError) {
+        showError = false;
+    } else {
+        strategy.style.visibility = (showHints ? 'visible' : 'hidden');
+        setStrategyHint(hand, outs);
+    }
     if (hand.rank == "Nothing") {
         document.getElementById('outs').textContent = `${outs["high"]}/${outs["mid"]}/${outs["low"]}`;
     } else {
@@ -402,6 +409,10 @@ function updateHints() {
 function updateErrors(cost) {
     costs += cost;
     displayWagered();
+    if (!showHints) {
+        showError = true;
+        strategy.style.visibility = 'visible';
+    }
 }
 
 function drawCard(play) {
@@ -445,6 +456,7 @@ function undimButtons() {
 
 function shuffleAndDeal() {
     gameOver = false;
+    showError = false;
     shuffleArray(deck); // Shuffle again before dealing
     message.textContent = "";
     others = deck.slice(0, 10);
@@ -492,7 +504,7 @@ foldButton.addEventListener('click', function() {
 
 document.getElementById('hintsCheckbox').addEventListener('change', function() {
     showHints = this.checked;
-    document.getElementById('strategy').style.visibility = (this.checked ? 'visible' : 'hidden');
+    strategy.style.visibility = (this.checked ? 'visible' : 'hidden');
     displayEVHints();
 });
 
