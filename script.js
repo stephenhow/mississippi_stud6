@@ -243,8 +243,7 @@ let strategy = document.getElementById('strategy');
 let gameOver = false;
 let ev = [], evDealt=0;
 let costs=0, expected=0;
-let showHints = false;
-let showError = false;
+let hintsCheckbox = document.getElementById('hintsCheckbox');
 
 function setStrategyHint(hand, outs) {
     let hint = "";
@@ -376,12 +375,12 @@ function setStrategyHint(hand, outs) {
         }
     }
     strategy.textContent = hint;
-    strategy.style.visibility = (showHints ? 'visible' : 'hidden');
+    strategy.style.visibility = (hintsCheckbox.checked ? 'visible' : 'hidden');
 }
 
 function displayEVHints() {
-    button3x.title = (showHints ? `EV: ${ev[3] >= 0 ? "+" : ""}${ev[3].toFixed(4)}` : "");
-    button1x.title = (showHints ? `EV: ${ev[1] >= 0 ? "+" : ""}${ev[1].toFixed(4)}` : "");
+    button3x.title = (hintsCheckbox.checked ? `EV: ${ev[3] >= 0 ? "+" : ""}${ev[3].toFixed(4)}` : "");
+    button1x.title = (hintsCheckbox.checked ? `EV: ${ev[1] >= 0 ? "+" : ""}${ev[1].toFixed(4)}` : "");
     foldButton.title = `EV: ${ev[0].toFixed(0)}`;
 }
 
@@ -402,7 +401,7 @@ function updateHints(holdError) {
     }
 }
 
-function registerPlayDecision(play) {
+function registerPlay(play) {
     wagered += play;
     let cost = (ev[play] - Math.max(ev[3], ev[1], ev[0]));
     costs += cost;
@@ -459,7 +458,6 @@ function undimButtons() {
 
 function shuffleAndDeal() {
     gameOver = false;
-    showError = false;
     shuffleArray(deck); // Shuffle again before dealing
     message.textContent = "";
     others = deck.slice(0, 10);
@@ -481,21 +479,20 @@ document.getElementById('shuffle').addEventListener('click', function() {
 
 button3x.addEventListener('click', function() {
     if (gameOver) shuffleAndDeal();
-    else registerPlayDecision(3);
+    else registerPlay(3);
 });
 
 button1x.addEventListener('click', function() {
     if (gameOver) shuffleAndDeal();
-    else registerPlayDecision(1);
+    else registerPlay(1);
 });
 
 foldButton.addEventListener('click', function() {
     if (gameOver) shuffleAndDeal();
-    else registerPlayDecision(0);
+    else registerPlay(0);
 });
 
-document.getElementById('hintsCheckbox').addEventListener('change', function() {
-    showHints = this.checked;
+hintsCheckbox.addEventListener('change', function() {
     strategy.style.visibility = (this.checked ? 'visible' : 'hidden');
     displayEVHints();
 });
