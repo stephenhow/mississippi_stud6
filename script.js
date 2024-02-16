@@ -376,6 +376,7 @@ function setStrategyHint(hand, outs) {
         }
     }
     strategy.textContent = hint;
+    strategy.style.visibility = (showHints ? 'visible' : 'hidden');
 }
 
 function displayEVHints() {
@@ -384,7 +385,7 @@ function displayEVHints() {
     foldButton.title = `EV: ${ev[0].toFixed(0)}`;
 }
 
-function updateHints() {
+function updateHints(holdError) {
     let hand = new Hand(...player, ...community);
     ev[3] = MSStud.calcEV(3, hand, remaining, wagered);
     ev[1] = MSStud.calcEV(1, hand, remaining, wagered);
@@ -393,12 +394,7 @@ function updateHints() {
     hand.eval();
     outs = MSStud.countOuts(player, community, remaining);
     displayEVHints();
-    if (showError) {
-        showError = false;
-    } else {
-        strategy.style.visibility = (showHints ? 'visible' : 'hidden');
-        setStrategyHint(hand, outs);
-    }
+    if (!holdError) setStrategyHint(hand, outs);
     if (hand.rank == "Nothing") {
         document.getElementById('outs').textContent = `${outs["high"]}/${outs["mid"]}/${outs["low"]}`;
     } else {
@@ -406,41 +402,47 @@ function updateHints() {
     }
 }
 
-function updateErrors(cost) {
+function registerPlayDecision(play) {
+    wagered += play;
+    let cost = (ev[play] - Math.max(ev[3], ev[1], ev[0]));
     costs += cost;
-    displayWagered();
-    if (!showHints) {
-        showError = true;
+    if (cost != 0) {
         strategy.innerHTML = strategy.innerHTML + ` <span style="color: red;">(${cost.toFixed(2)})</span>`;
         strategy.style.visibility = 'visible';
     }
+    if (play == 0) {
+        resolveWagers();
+    } else {
+        community.push(remaining.pop());
+        let combined = [...player, ...community];
+        displayCards('playerCards', combined);
+        if (community.length < 3) {
+            updateHints((cost < 0));
+            displayStatus();
+        } else {
+            resolveWagers();
+        }
+    }
 }
 
-function drawCard(play) {
-    wagered += play;
-    let cost = (ev[play] - Math.max(ev[3], ev[1], ev[0]));
-    if (cost != 0) updateErrors(cost);
-    community.push(remaining.pop());
-    let combined = [...player, ...community];
-    displayCards('playerCards', combined);
-    if (community.length <= 2) updateHints();
-    displayWagered();
-    if (community.length == 3) resolveWagers();
-}
-
-function displayWagered() {
+function displayStatus() {
     message.innerHTML = `this hand: ${wagered} units, total: ${net > 0 ? "+" : ""}${net};  theoretical: ${expected > 0 ? "+" : ""}${expected.toFixed(1)} <span style="color: red;">(${costs.toFixed(2)})</span>`;
 }
 
 function resolveWagers() {
     gameOver = true;
     dimButtons();
-    hand = new Hand(...player, ...community);
-    hand.eval();
-    outcome = wagered*MSStud.getPayout(hand);
+    let isFold = (community.length < 3);
+    if (!isFold) {
+        hand = new Hand(...player, ...community);
+        hand.eval();
+        outcome = wagered*MSStud.getPayout(hand);
+    } else {
+        outcome = -1*wagered;
+    }
     net += outcome;
     expected += evDealt;
-    message.textContent = `${hand.length == 5 ? hand.rank : "FOLD"}, outcome: ${outcome > 0 ? "+" : ""}${outcome}, net: ${net}`;
+    message.textContent = `${isFold ? "FOLD" : hand.rank}, outcome: ${outcome > 0 ? "+" : ""}${outcome}, net: ${net}`;
 }
 
 function dimButtons() {
@@ -469,7 +471,7 @@ function shuffleAndDeal() {
     displayCards('otherCards', others);
     displayCards('playerCards', player);
     updateHints();
-    displayWagered();
+    displayStatus();
 }
 
 document.getElementById('shuffle').addEventListener('click', function() {
@@ -478,29 +480,18 @@ document.getElementById('shuffle').addEventListener('click', function() {
 });
 
 button3x.addEventListener('click', function() {
-    if (gameOver) {
-        shuffleAndDeal();
-    } else {
-        drawCard(3);
-    }
+    if (gameOver) shuffleAndDeal();
+    else registerPlayDecision(3);
 });
 
 button1x.addEventListener('click', function() {
-    if (gameOver) {
-        shuffleAndDeal();
-    } else {
-        drawCard(1);
-    }
+    if (gameOver) shuffleAndDeal();
+    else registerPlayDecision(1);
 });
 
 foldButton.addEventListener('click', function() {
-    if (gameOver) {
-        shuffleAndDeal();
-    } else {
-        let cost = (ev[0] - Math.max(ev[3], ev[1], ev[0]));
-        if (cost != 0) updateErrors(cost);
-        resolveWagers();
-    }
+    if (gameOver) shuffleAndDeal();
+    else registerPlayDecision(0);
 });
 
 document.getElementById('hintsCheckbox').addEventListener('change', function() {
