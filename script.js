@@ -411,6 +411,7 @@ function updateErrors(cost) {
     displayWagered();
     if (!showHints) {
         showError = true;
+        strategy.innerHTML = strategy.innerHTML + ` <span style="color: red;">(${cost.toFixed(2)})</span>`;
         strategy.style.visibility = 'visible';
     }
 }
