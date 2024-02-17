@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Table Example</title>
+<style>
+    table {
+        margin-left: auto;
+        margin-right: auto;
+        width: 40%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 6px;
+      text-align: left;
+    }
+
+    table td:first-child, table th:first-child {
+      width: 20%;
+    }
+
+    table td:nth-child(2), table th:nth-child(2) {
+      width: 70%;
+    }
+
+    table td:nth-child(3), table th:nth-child(3) {
+      width: 10%;
+    }
+
+    thead {
+      background-color: #f2f2f2;
+    }
+
+    tr.2nd-st {
+      background-color: #FFFFFF;
+    }
+
+    tr.3rd-st {
+      background-color: #F0F0F0;
+    }
+
+    tr.4th-st {
+      background-color: #FFFFFF;
+    }
+
+    .redsuit {
+      color: red;       /* Set the text color to red */
+      font-size: 64px; /* Set the font size to large */
+    }
+
+    .blacksuit {
+      color: black;       /* Set the text color to red */
+      font-size: 64px; /* Set the font size to large */
+    }
+</style>
+</head>
+<body>
+
+<table>
+  <thead>
+    <tr>
+      <th>Starting Hand</th>
+      <th>Description</th>
+      <th>Decision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Section 1 -->
+    <tr class="2nd-st">
+      <td rowspan="4"><span class="redsuit">&#x1F0CB;</span> <span class="redsuit">&#x1F0CC;</span></td>
+      <td>6 high outs, 5 suited high outs w/ possible SF</td><td>3x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>3-5 high outs</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>2 high outs w/ possible SF, OR reaches w/ 12+ pay cards left</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+    <tr class="2nd-st">
+      <td rowspan="3"><span class="redsuit">&#x1F0CB;</span> <span class="blacksuit">&#x1F0AC;</span></td>
+      <td>6 high outs</td><td>3x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>3-5 high outs</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+    <tr class="2nd-st">
+      <td rowspan="5"><span class="blacksuit">&#x1F0DE;</span> <span class="blacksuit">&#x1F0DA;</span></td>
+      <td>3 high and 3 mid w/ possible SF</td>
+      <td>3x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>3 high outs; 2 high w/ any mid outs; 1 high w/ 3 mid outs</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>2 high outs w/ possible SF, OR reaches w/ 12+ pay cards left</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>1 high w/ 2 mid outs AND possible SF, OR reaches w/ 12+ pay cards left</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+    <tr class="2nd-st">
+      <td rowspan="3"><span class="redsuit">&#x1F0BE;</span> <span class="blacksuit">&#x1F0DA;</span></td>
+      <td>3 high outs; 2 high w/ 2+ mid outs</td>
+      <td>1x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>2 high and 1 mid IF reaches; 1 high and 3 mid IF reaches</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+    <tr class="2nd-st">
+      <td rowspan="3"><span class="redsuit">&#x1F0BB;</span> <span class="redsuit">&#x1F0B4;</span></td>
+      <td>3 high outs; 2 high w/ 2+ low outs</td>
+      <td>1x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>2 high outs AND possible SF wheel OR 12+ pay cards left</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+    <tr class="2nd-st">
+      <td rowspan="3"><span class="redsuit">&#x1F0BB;</span> <span class="blacksuit">&#x1F0D4;</span></td>
+      <td>3 high outs</td>
+      <td>1x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>2 high and 3 low outs AND wheel draws OR 12+ pay cards left</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+    <tr class="2nd-st">
+      <td rowspan="3"><span class="blacksuit">&#x1F0D8;</span> <span class="blacksuit">&#x1F0D6;</span></td>
+      <td>4+ mid outs</td>
+      <td>1x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>3 mid outs IF possible SF</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+    <tr class="2nd-st">
+      <td rowspan="3"><span class="redsuit">&#x1F0B8;</span> <span class="blacksuit">&#x1F0D6;</span></td>
+      <td>5+ mid outs</td>
+      <td>1x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>4 mid outs IF no-gapped or very possible straight AND 12+ pay cards left</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+    <tr class="2nd-st">
+      <td rowspan="4"><span class="redsuit">&#x1F0C7;</span> <span class="redsuit">&#x1F0C5;</span></td>
+      <td>uncopied (all outs remaining)</td>
+      <td>1x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>3 mid and 2 low outs AND possible SF OR no-gap</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>3 mid outs AND possible SF</td> <td>1x</td> </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+    <tr class="2nd-st">
+      <td rowspan="2"><span class="redsuit">&#x1F0B7;</span> <span class="blacksuit">&#x1F0D5;</span></td>
+      <td>uncopied AND reaches OR 12+ pay cards lefts</td>
+      <td>1x</td>
+    </tr>
+    <tr class="2nd-st"> <!-- --> <td>else</td> <td>Fold</td> </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

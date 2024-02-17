@@ -413,8 +413,7 @@ function registerPlay(play) {
         resolveWagers();
     } else {
         community.push(remaining.pop());
-        let combined = [...player, ...community];
-        displayCards('playerCards', combined);
+        displayCards('playerCards', [...player, ...community]);
         if (community.length < 3) {
             updateHints((cost < 0));
             displayStatus();
