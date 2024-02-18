@@ -5,29 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Table Example</title>
 <style>
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     table {
         margin-left: auto;
         margin-right: auto;
-        width: 40%;
         border-collapse: collapse;
+        width: auto; /* Ensure table width is based on content */
     }
 
     th, td {
       border: 1px solid black;
       padding: 6px;
       text-align: left;
-    }
-
-    table td:first-child, table th:first-child {
-      width: 20%;
-    }
-
-    table td:nth-child(2), table th:nth-child(2) {
-      width: 70%;
-    }
-
-    table td:nth-child(3), table th:nth-child(3) {
-      width: 10%;
     }
 
     thead {
