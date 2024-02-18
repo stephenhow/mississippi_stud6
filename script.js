@@ -465,7 +465,9 @@ function shuffleAndDeal() {
     community = [];
     wagered = 1;
     undimButtons();
-    displayCards('otherCards', others);
+    for (let i=0; i<5; i++) {
+        displayCards(`player${i}`, others.slice(2*i, 2*i+2));
+    }
     displayCards('playerCards', player);
     updateHints();
     displayStatus();

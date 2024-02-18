@@ -26,11 +26,11 @@ body, html {
     cursor: pointer;
 }
 
-#otherCards, #playerCards {
+#others, #playerCards {
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
 }
 
 #message, #strategy, #outs {
@@ -55,8 +55,19 @@ body, html {
     background-size: cover;
 }
 
+.other .card {
+    margin-top: 10px;
+    margin-right: 40px;
+}
+
 .grayed-out {
   color: #999;
   background-color: #ccc;
   border: 1px solid #999;
+}
+
+.label {
+    width: 100px;
+    text-align: center;
+    margin-top: 10px;
 }
