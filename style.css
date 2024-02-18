@@ -13,31 +13,31 @@ body, html {
 }
 
 #shuffle {
-    margin-bottom: 20px;
-    font-size: 20px;
-    padding: 10px 20px;
+    margin-bottom: 1em;
+    font-size: 1em;
+    padding: 0.5em 1em;
     cursor: pointer;
 }
 
 #play3x, #play1x, #fold {
-    margin-bottom: 20px;
-    font-size: 20px;
-    padding: 10px 20px;
+    margin-bottom: 1em;
+    font-size: 1em;
+    padding: 0.5em 1em;
     cursor: pointer;
 }
 
 #others, #playerCards {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 50px;
+    gap: 0.5em;
+    margin-bottom: 2em;
 }
 
 #message, #strategy, #outs {
-    margin-bottom: 20px;
-    font-size: 20px;
-    height: 20px;
-    padding: 0px 20px;
+    margin-bottom: 1em;
+    font-size: 1em;
+    height: 0.5em;
+    padding: 0px 1em;
 }
 
 #strategy {
@@ -50,14 +50,14 @@ body, html {
 }
 
 .card {
-    width: 100px; /* Adjust based on your images */
-    height: 140px; /* Adjust based on your images */
+    width: 5em; /* Adjust based on your images */
+    height: 7em; /* Adjust based on your images */
     background-size: cover;
 }
 
 .other .card {
-    margin-top: 10px;
-    margin-right: 40px;
+    margin-top: 0.5em;
+    margin-right: 2em;
 }
 
 .grayed-out {
@@ -67,13 +67,13 @@ body, html {
 }
 
 .label {
-    width: 100px;
+    width: 5em;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 0.5em;
 }
 
 #links {
-    margin-top: 100px;
+    margin-top: 5em;
 }
 
 /* Unvisited link */
