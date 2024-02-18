@@ -71,3 +71,30 @@ body, html {
     text-align: center;
     margin-top: 10px;
 }
+
+#links {
+    margin-top: 100px;
+}
+
+/* Unvisited link */
+a:link {
+  color: #007bff; /* Blue color for links */
+  text-decoration: none; /* Removes underline from links */
+  transition: color 0.3s ease-in-out; /* Smooth color transition */
+}
+
+/* Visited link */
+a:visited {
+  color: #5a5a5a; /* Dark grey color for visited links */
+}
+
+/* Hover link */
+a:hover {
+  color: #ff4500; /* Orange color when mouse hovers over link */
+  text-decoration: underline; /* Adds underline on hover for emphasis */
+}
+
+/* Active link */
+a:active {
+  color: #0336ff; /* Different color when link is clicked */
+}
