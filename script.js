@@ -332,7 +332,8 @@ function setStrategyHint(hand, outs) {
             if (outs["high"] >= 4) hint = "1x any 4 high outs or better";
             else if ((outs["high"] == 3) && (outs["mid"] >= 2)) hint = "1x 3 high and 2 mid outs or better";
             else if ((outs["high"] == 3) && (outs["low"] >= 5)) hint = "1x 3 high and 5 low outs or better";
-            else if (outs["high"] == 3) hint = "1x 3 high and <2 mid outs AND reaches";
+            else if ((outs["high"] == 3) && (outs["mid"] == 1) && (outs["low"] >= 2)) hint = "1x 3 high 1 mid and 2 low outs or better";
+            else if (outs["high"] == 3) hint = "1x 3 high outs IF reaches";
             else if ((outs["high"] == 2) && (outs["mid"] >= 4)) hint = "1x 2 high and 4 mid outs or better";
             else if ((outs["high"] == 2) && (outs["mid"] == 3)) switch (outs["low"]) {
                 case 3: case 2: hint = "1x 2/3/2 or better"; break;
